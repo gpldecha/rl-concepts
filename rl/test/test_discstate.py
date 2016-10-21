@@ -4,6 +4,10 @@ import numpy as np
 from rl.utils.discstate import DiscretiseState
 
 
+def testmethod():
+    pass
+
+
 class TestDiscretiseStateMethods(unittest.TestCase):
 
     def test1DcValues2Int(self):
@@ -20,12 +24,8 @@ class TestDiscretiseStateMethods(unittest.TestCase):
         val[2]  = 20
         val[3]  = 45
         val[4]  = 89
-
-        idxs    = discState.toint(val) # [1, 1, 2, 5, 9]
-        idxs    = idxs.tolist()
-
+        idxs    = discState.toint(val)
         self.assertItemsEqual(idxs,[1, 1, 2, 5, 9])
-
 
 
 

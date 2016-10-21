@@ -63,7 +63,7 @@ class DiscretiseState:
             idx_i = 0
             for k in range(0,dims-1):
                 print 'state[', i , ',' , k ,'] '
-                    idx_i = idx_i + np.prod(self._N[k+1:-1]) * np.digitize(state[i,k], self.bins[k])
+                idx_i = idx_i + np.prod(self._N[k+1:-1]) * np.digitize(state[i,k], self.bins[k])
             idx_i = idx_i + np.digitize(state[i,-1], self.bins[-1])
             idx.append(idx_i)
 
