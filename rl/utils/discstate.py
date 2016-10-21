@@ -23,13 +23,7 @@ class DiscretiseState:
             _num = state_bins[i]
             _min = state_mins[i]
             _max = state_maxs[i]
-            #print 'dim(',i,'): _num(',_num,')  _min(',_min,')  _max(',_max,')'
-
             self.bins.append(np.linspace(_min,_max,_num))
-
-            print self.bins[0]
-
-
 
     def toint(self,state):
         """ Converts a continuous state to a discrete state
@@ -39,6 +33,13 @@ class DiscretiseState:
 
             Returns:
                     (int) : Discretised state index.
+
+            Comments:
+                    Uses numpy.digitize (double) -> (int):  bin index i of x will
+                    satisfy bins[i-1] <= x < bins[i]
+
+                    If state is multivariate each dimension is bined individually
+                    an a single index is computed via generic row-major formula. 
         """
 
         shape       = state.shape
@@ -52,17 +53,12 @@ class DiscretiseState:
         else:
             return idx
 
-        #print 'dims: ', dims, ' self._num_dim: ', self._num_dim
-
         assert self._num_dim == dims
 
-        print 'state.ndim == 2'
-        print state
 
         for i in range(0,num_points):
             idx_i = 0
             for k in range(0,dims-1):
-                print 'state[', i , ',' , k ,'] '
                 idx_i = idx_i + np.prod(self._N[k+1:-1]) * np.digitize(state[i,k], self.bins[k])
             idx_i = idx_i + np.digitize(state[i,-1], self.bins[-1])
             idx.append(idx_i)
