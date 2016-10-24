@@ -1,14 +1,49 @@
 import unittest
-
 import numpy as np
 from rl.utils.discstate import DiscretiseState
 
-
-def testmethod():
-    pass
-
-
 class TestDiscretiseStateMethods(unittest.TestCase):
+
+    def setUp(self):
+            #  Test discrestisation of 2D continuous data
+            #             ____________________
+            #          3 | 12 | 13 | 14 | 15 |
+            #    y       |____|____|____|____|
+            #    |     2 |  8 |  9 | 10 | 11 |
+            #    a       |____|____|____|____|
+            #    x     1 |  4 |  5 |  6 |  7 |
+            #    i       |____|____|____|____|
+            #    s     0 |  0 |  1 |  2 |  3 |
+            #            |____|____|____|____|
+            #               0    1    2    3
+            #                   x-axis
+            #
+            #   x-axis : 1st dimension of val
+            #   y-axis : 2nd dimension of val
+
+            val         = np.zeros((16,2))
+            val[0,:]    = np.array([-1,-1])     # (0,0) =  0
+            val[1,:]    = np.array([-1,25])     # (0,1) =  1
+            val[2,:]    = np.array([-1,75])     # (0,2) =  2
+            val[3,:]    = np.array([-1,101])    # (0,3) =  3
+
+            val[4,:]    = np.array([10,-1])     # (1,0) =  5
+            val[5,:]    = np.array([10,25])     # (1,1) =  5
+            val[6,:]    = np.array([10,75])     # (1,2) =  6
+            val[7,:]    = np.array([10,101])    # (1,3) =  7
+
+            val[8,:]    = np.array([75,-1])    # (2,0) =  8
+            val[9,:]    = np.array([75,25])    # (2,1) =  9
+            val[10,:]   = np.array([75,75])    # (2,2) = 10
+            val[11,:]   = np.array([75,101])   # (2,3) = 11
+
+            val[12,:]    = np.array([101,-1])    # (2,0) =  12
+            val[13,:]    = np.array([101,25])    # (2,1) =  13
+            val[14,:]    = np.array([101,75])    # (2,2) =  14
+            val[15,:]    = np.array([101,101])   # (2,3) =  15
+
+            self.twoDvals = val
+            self.twoDidx  = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 
     def test1DdValues2Int(self):
         """ Test bininig of discrete values """
@@ -59,25 +94,23 @@ class TestDiscretiseStateMethods(unittest.TestCase):
             bin index.
         """
 
-        bins        = np.array([3,3])
-        mins        = [0,0]
+        bins        = np.array([3,3]) # 1st dimension has four bins [0,1,2,3,4].
+        mins        = [0,0]           # 2nd dimension same as 1st.
         maxs        = [100,100]
         discState   = DiscretiseState(bins,mins,maxs)
+        idxs        = discState.twoDtoint(self.twoDvals)
+        self.assertItemsEqual(idxs,self.twoDidx)
 
-        val         = np.zeros((6,2))
-        val[0,:]    = np.array([-1,-1]) # outside both dimensions so idx = 0 + 0
-        val[1,:]    = np.array([-1,10])  # outside both dimensions so idx = 0 + 1
+    def testNDdValues2Int(self):
+        """ Tests the conversion of a 2-dimensional continuous variable to a
+            bin index whilst using the N-dimensional conversion function.
+        """
+        bins        = np.array([3,3]) # 1st dimension has four bins [0,1,2,3,4].
+        mins        = [0,0]           # 2nd dimension same as 1st.
+        maxs        = [100,100]
+        discState   = DiscretiseState(bins,mins,maxs)
+        idxs        = discState.toint(self.twoDvals)
+        self.assertItemsEqual(idxs,self.twoDidx)
 
-        val[2,:]    = np.array([0,0])    # 2
-        val[3,:]    = np.array([80,0])   # 3
-        val[4,:]    = np.array([25,80])  # 4
-        val[5,:]    = np.array([80,80])  # 5
-
-        idxs        = discState.toint(val)
-
-        print 'idxs: ', idxs
-
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

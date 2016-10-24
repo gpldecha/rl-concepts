@@ -16,7 +16,7 @@ class DiscretiseState:
         """
         assert state_bins.size == len(state_mins) == len(state_maxs)
         self._num_dim  = len(state_bins)
-        self._N        = state_bins
+        self._N        = state_bins+1
         self.bins      = []
 
         for i in range(0,self._num_dim):
@@ -24,6 +24,37 @@ class DiscretiseState:
             _min = state_mins[i]
             _max = state_maxs[i]
             self.bins.append(np.linspace(_min,_max,_num))
+
+
+    def twoDtoint(self,state):
+        """ Converts a continous 2D state to a discrete sate
+            Args:
+                state (numpy.ndarray) : Current state of the environment.
+                                        numpy.ndarray((num_points,dims=2))
+            Returns:
+                    (int) : Discretised state index.
+        """
+        shape       = state.shape
+        dims        = None
+        num_points  = None
+        idx         = []
+
+        if len(shape) == 2:
+            dims        = shape[1]
+            num_points  = shape[0]
+        else:
+            return idx
+
+        assert len(self.bins) == 2
+
+        """ idx = i_row  * num_cols * i_col """
+
+        N_cols = self._N[1]
+        for i in range(0,num_points):
+            idx_i = np.digitize(state[i,0], self.bins[0]) * N_cols + np.digitize(state[i,1], self.bins[1])
+            idx.append(idx_i)
+        return idx
+
 
     def toint(self,state):
         """ Converts a continuous state to a discrete state
@@ -39,7 +70,7 @@ class DiscretiseState:
                     satisfy bins[i-1] <= x < bins[i]
 
                     If state is multivariate each dimension is bined individually
-                    an a single index is computed via generic row-major formula. 
+                    an a single index is computed via generic row-major formula.
         """
 
         shape       = state.shape
@@ -55,11 +86,13 @@ class DiscretiseState:
 
         assert self._num_dim == dims
 
-
-        for i in range(0,num_points):
+        for i in range(0,num_points): # i is index of points
             idx_i = 0
-            for k in range(0,dims-1):
-                idx_i = idx_i + np.prod(self._N[k+1:-1]) * np.digitize(state[i,k], self.bins[k])
+            for j in range(0,dims-1): # j is index of dimensions
+                #print '(', i, ',',  j , ')   N[', j+1, ']'
+                #print 'dim(',j,') -> ',  np.digitize(state[i,j], self.bins[j])
+                idx_i = idx_i + np.prod(self._N[j+1:]) * np.digitize(state[i,j], self.bins[j])
+            #print 'dim(1)   -> ', np.digitize(state[i,-1], self.bins[-1])
             idx_i = idx_i + np.digitize(state[i,-1], self.bins[-1])
             idx.append(idx_i)
 
