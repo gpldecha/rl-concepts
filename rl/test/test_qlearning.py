@@ -10,9 +10,11 @@ class TestQlearning(unittest.TestCase):
 
 
     def test1DWorld(self):
-        pass
 
-        #qlearning = Qlearning(100,2)
+        qlearning = Qlearning(100,2)
+
+        qlearning.
+
         #num_episodes = 1
         #for i in range(0,num_episodes):
 
