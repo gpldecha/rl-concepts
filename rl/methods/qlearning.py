@@ -31,13 +31,13 @@ class Qlearning:
         self.Q            = np.zeros((num_states,num_actions))
 
     def action(self,state):
-        """ orresponding to state with maximum value
+        """ Corresponding to state with maximum value
             Args:
                 state (int) : State index (discrete states)
             Returns:
                 (int)       : action to be applied
         """
-        return self.actions[np.argmax(self.Q[state,:])]
+        return np.argmax(self.Q[state,:])
 
     def update(self,state,action,reward,statep):
         """Q-learning update rule: Q(s,a)_new <- Q(s,a)_old + alpha * ( r + gamma * max_a Q(s',a) - Q(s,a)_old  )
@@ -47,4 +47,4 @@ class Qlearning:
                 reward (double) : current reward   r
                 statep (int)    : current state    s'
         """
-        self.Q[state,action] = self.Q[state,action] + self.alpha * ( self.gamma  * self.Q[statep,np.argmax(self.Q[statep,:])] - self.Q[state,action]  )
+        self.Q[state,action] = self.Q[state,action] + self.alpha * (reward + self.gamma  * self.Q[statep,np.argmax(self.Q[statep,:])] - self.Q[state,action]  )
