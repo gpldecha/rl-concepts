@@ -1,0 +1,45 @@
+""" Test discrete Q-learning behaviour """
+
+import unittest
+import numpy as np
+from rl.utils.discstate import DiscretiseState
+from rl.methods.qlearning import Qlearning
+import time
+
+import gym
+import gym_leftright
+
+
+class TestQlearning(unittest.TestCase):
+
+
+    def test1DWorld(self):
+        print "== Test Q-learning =="
+
+        qlearning = Qlearning(num_states=100,num_actions=2)
+
+        env = gym.make('leftright-v0')
+        env.reset()
+
+        for _ in range(50):
+            env.render()
+            action = env.action_space.sample()
+
+            qlearning.action(action)
+
+            observation, reward, done, info = env.step(action)
+
+        #env = LeftRightEnv()
+
+        # qlearning = Qlearning(100,2)
+        # env = LeftRightEnv()
+
+        #num_episodes = 1
+        #for i in range(0,num_episodes):
+
+
+
+
+
+if __name__ == '__main__':
+    unittest.main()

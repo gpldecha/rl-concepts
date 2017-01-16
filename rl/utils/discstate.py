@@ -1,4 +1,5 @@
 import numpy as np
+import warnings
 
 
 class DiscretiseState:
@@ -72,6 +73,11 @@ class DiscretiseState:
                     If state is multivariate each dimension is bined individually
                     an a single index is computed via generic row-major formula.
         """
+
+        if not isinstance(state,np.ndarray):
+            warnings.warn("type(state) == " + type(state) + " is not of type numpy.ndarray", Warning)
+
+
 
         shape       = state.shape
         dims        = None
