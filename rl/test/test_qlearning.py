@@ -4,18 +4,11 @@ import unittest
 import numpy as np
 from rl.utils.discstate import DiscretiseState
 from rl.methods.qlearning import Qlearning
-<<<<<<< HEAD
 from rl.policies.egreedy import Egreedy
 import rl.utils.plot as pl
 import time
 import gym
 import gym_leftright
-=======
-from rl.policies.egreedy import EpsilonGreedy
-import gym_leftright
-import gym
-import time
->>>>>>> 30ef5d6fa4f56284eb86f7f3bf3764939cc9bcbf
 
 
 class TestQlearning(unittest.TestCase):
@@ -37,7 +30,6 @@ class TestQlearning(unittest.TestCase):
     def test1DWorld(self):
         print "== Test Q-learning =="
 
-<<<<<<< HEAD
         # Setup of environment and discretisation
         env = gym.make('leftright-v0')
         tmp                     = np.zeros((1,1))
@@ -95,56 +87,6 @@ class TestQlearning(unittest.TestCase):
 
         #raw_input("Finished Press Enter to continue...")
         print 'Q:       ', qlearning.Q
-=======
-        print '== Testing Q-learning =='
-        return True
-        bins        = np.array([11])
-        mins        = [0]
-        maxs        = [10]
-        discState   = DiscretiseState(bins,mins,maxs)
-        val         = np.zeros((1,1))
-
-        qlearning   = Qlearning(12,2)
-        e_policy    = EpsilonGreedy(qlearning.Q)
-
-        env = gym.make('leftright-v0')
-
-        for i_episode in range(20):
-
-            print 'episode(', i_episode, ')'
-
-            val[0][0] = env.reset()
-            state = discState.toint(val)[0]
-
-            for t in range(200):
-                env.render()
->>>>>>> 30ef5d6fa4f56284eb86f7f3bf3764939cc9bcbf
-
-                action = e_policy.action(state)
-
-                observation, reward, done, info = env.step(action)
-
-                val[0][0] = observation
-                statep = discState.toint(val)[0]
-
-                print 'state: ', state, ' action: ', action, ' rewad: ', reward, ' statep: ', statep
-
-                qlearning.update(state,action,reward,statep)
-
-                state = statep
-                time.sleep(1.0)
-
-                if done:
-                    print("Episode finished after {} timesteps".format(t+1))
-                    break
-
-
-
-
-
-
-        #num_episodes = 1
-        #for i in range(0,num_episodes):
 
 if __name__ == '__main__':
     unittest.main()
