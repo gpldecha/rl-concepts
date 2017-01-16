@@ -30,8 +30,8 @@ class Qlearning:
         self._num_actions = num_actions
         self.Q            = np.zeros((num_states,num_actions))
 
-    def action(self,action_index,state_index):
-        """ orresponding to state with maximum value
+    def action(self,state):
+        """ Corresponding to state with maximum value
             Args:
                 action_index (int) : action index
                 state_index (int) : state index
