@@ -26,7 +26,6 @@ class Egreedy:
             Return:
                     (int) : action index (column of Q).
         """
-        print 'self._num_actions: ', self._num_actions
         if np.random.rand() < self.epsilon:
             return np.random.choice(self._num_actions,)
         else:

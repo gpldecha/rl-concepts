@@ -1,7 +1,5 @@
 """ Test discrete Q-learning behaviour """
 
-import unittest
-import numpy as np
 from rl.utils.discstate import Discretise
 from rl.methods.qlearning import Qlearning
 from rl.policies.egreedy import Egreedy
@@ -11,12 +9,9 @@ import gym
 import gym_leftright
 
 
-class TestQlearning(unittest.TestCase):
 
-    def test1DWorld(self):
-        print "== Test Q-learning =="
+if __name__ == "__main__":
 
-        # Setup of environment and discretisation
         env = gym.make('leftright-v0')
         env.max_speed  = 1
         discState      = Discretise(bin_sizes=10,state_mins=0,state_maxs=10)
@@ -33,8 +28,6 @@ class TestQlearning(unittest.TestCase):
 
         if bPlot:
             plot_value_func = pl.PlotQFunction1D(np.arange(0,11),qlearning.Q)
-
-        #raw_input("Press Enter to continue...")
 
         for eps in range(num_episodes):
 
@@ -65,7 +58,3 @@ class TestQlearning(unittest.TestCase):
 
 
         raw_input("Finished Press Enter to continue...")
-        print 'Q:       ', qlearning.Q
-
-if __name__ == '__main__':
-    unittest.main()

@@ -8,10 +8,11 @@ def plot_policy_1D(ax,Q):
     pass
 
 
-class PlotValueFunction1D:
+class PlotQFunction1D:
 
-    def __init__(self,states,values):
+    def __init__(self,states,Q):
         self._states = states
+
 
         plt.ion()
         self.fig = plt.figure()
@@ -23,17 +24,25 @@ class PlotValueFunction1D:
         plt.xlabel(r'\textbf{state} (x)')
         plt.ylabel(r'V(s)',fontsize=16)
 
-        print 'states: ', states
-        print 'values: ', values
+        V = np.max(Q,1)
 
-        line, = self.ax.plot(states, values, 'r-')
+        line_v,  = self.ax.plot(states, V, 'k-')
+        line_a1, = self.ax.plot(states, Q[:,0], 'r-')
+        line_a2, = self.ax.plot(states, Q[:,1], 'b-')
 
-        self.line = line
+        self.line_v = line_v
+        self.line_a1 = line_a1
+        self.line_a2 = line_a2
 
         plt.show()
 
-    def update(self,values):
-        self.line.set_ydata(values)
+    def update(self,Q):
+
+        V = np.max(Q,1)
+
+        self.line_v.set_ydata(V)
+        self.line_a1.set_ydata(Q[:,0])
+        self.line_a2.set_ydata(Q[:,1])
 
         self.ax.relim()
         self.ax.autoscale_view()

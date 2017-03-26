@@ -40,12 +40,16 @@ class Qlearning:
         """
         return self.actions[self.Q[state_index,action_index]]
 
-    def update(self,state,action,reward,statep):
+    def update(self,state,action,reward,statep,bterminal):
         """Q-learning update rule: Q(s,a)_new <- Q(s,a)_old + alpha * ( r + gamma * max_a Q(s',a) - Q(s,a)_old  )
             Args:
                 state (int)     : previous state   s
                 action (int)    : previous action  a
                 reward (double) : current reward   r
                 statep (int)    : current state    s'
+                bterminal (bool): True if s is terminal state
         """
-        self.Q[state,action] = self.Q[state,action] + self.alpha * ( reward + self.gamma  * self.Q[statep,np.argmax(self.Q[statep,:])] - self.Q[state,action]  )
+        if bterminal:
+            self.Q[state,action] = reward
+        else:
+            self.Q[state,action] = self.Q[state,action] + self.alpha * ( reward + self.gamma  * self.Q[statep,np.argmax(self.Q[statep,:])] - self.Q[state,action]  )

@@ -1,6 +1,99 @@
 import numpy as np
 import warnings
+import numbers
+import types
 
+class Discretise:
+    """ Discretises multivariate continuous state array to an index. This is
+        necessary when runing discrete RL methods on continuous state
+        environments.
+    """
+    def __init__(self,bin_sizes,state_mins,state_maxs):
+        """
+            Args:
+                bin_sizes  (list or int)           : Number of bins for each dimension of the continuous state space.
+                state_mins (list or int)           : Number of minimum values for each dimension of the coninuous state space.
+                state_maxs (list or int)           : Number of maximum values for each dimension of the coninuous state space.
+        """
+        if isinstance(bin_sizes,types.IntType):
+            self._num_dim = 1
+        elif isinstance(bin_sizes,list):
+            assert len(bin_sizes) == len(state_mins) == len(state_maxs)
+            self._num_dim  = len(bin_sizes)
+        else:
+            warnings.warn("all inputs should be of either int or np.ndarray your input is " + type(bin_sizes), Warning)
+
+        self.bin_sizes = bin_sizes
+        self.state_mins = state_mins
+        self.state_maxs = state_maxs
+
+    def bound_value(self,value,vmin,vmax):
+        if value < vmin:
+            return vmin
+        elif value > vmax:
+            return vmax
+        else:
+            return value
+
+    def numtoint(self,state):
+        """ Converts a continuous 1D number to a discrete state
+            Args:
+                state (Number) : Current state value
+            Returns:
+                (int) : Discretised state index.
+            Comments:
+        """
+        assert isinstance(state,numbers.Number)
+        state = self.bound_value(float(state),self.state_mins,self.state_maxs)
+        return round( (state - self.state_mins)/(self.state_maxs - self.state_mins) * self.bin_sizes, 0)
+
+    def num1Dlist2int(self,states):
+        """ Converts a continuous list of 1D numbers to a list of discrete states
+                Args:
+                    states list(Number) : list of continuous tate values
+                Returns:
+                    (int) : Discretised state index.
+                Comments:
+        """
+        assert isinstance(states,list)
+        return [ self.numtoint(s) for s in states ]
+
+    def vecNDtoint(self,state):
+        """ Converts a continuous state vector to a discrete state integer
+                Args:
+                    state (numpy.ndarray) : Current state of the environment.
+                                            numpy.ndarray((dims,))
+                Returns:
+                        (int) : Discretised state index.
+                Comments:
+        """
+        assert isinstance(state,np.ndarray)
+
+        idx = 0
+        state_j = 0
+        for j in range(0,dims-1): # j is index of dimensions
+            state_j = self.bound_value(state[j],self.state_mins[j],self.state_maxs[j])
+            idx   = idx + np.prod(self._N[j+1:]) *  round( (state_j - self.state_mins[j])/(self.state_maxs[j] - self.state_mins[j]) * self.bin_sizes[j] , 0 )
+        state_j = self.bound_value(state[-1],self.state_mins[-1],self.state_maxs[-1])
+        idx = idx +  round( (state_j - self.state_mins[-1])/(self.state_maxs[-1] - self.state_mins[-1]) * self.bin_sizes[-1], 0)
+        return idx
+
+
+    def vecNDtoint(self,states):
+        """ Converts a continuous list of vector states to a discrete state
+                Args:
+                    states list(numpy.ndarray) : Current state of the environment.
+                                                 numpy.ndarray((num_points,dims))
+
+                Returns:
+                        (int) : Discretised state index.
+
+                Comments:
+                        rescales each dimension to the interval [0,]
+
+        """
+        assert isinstance(state,np.ndarray)
+        return [ self.vecNDtoint(s) for s in states ]
 
 class DiscretiseState:
     """ Discretises multivariate continuous state array to an index. This is
@@ -95,10 +188,7 @@ class DiscretiseState:
         for i in range(0,num_points): # i is index of points
             idx_i = 0
             for j in range(0,dims-1): # j is index of dimensions
-                #print '(', i, ',',  j , ')   N[', j+1, ']'
-                #print 'dim(',j,') -> ',  np.digitize(state[i,j], self.bins[j])
                 idx_i = idx_i + np.prod(self._N[j+1:]) * np.digitize(state[i,j], self.bins[j])
-            #print 'dim(1)   -> ', np.digitize(state[i,-1], self.bins[-1])
             idx_i = idx_i + np.digitize(state[i,-1], self.bins[-1])
             idx.append(idx_i)
 

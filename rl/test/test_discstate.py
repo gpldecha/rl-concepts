@@ -1,6 +1,7 @@
 import unittest
 import numpy as np
 from rl.utils.discstate import DiscretiseState
+from rl.utils.discstate import Discretise
 
 class TestDiscretiseStateMethods(unittest.TestCase):
 
@@ -45,8 +46,40 @@ class TestDiscretiseStateMethods(unittest.TestCase):
             self.twoDvals = val
             self.twoDidx  = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 
+    def test1DdValues2IntV2(self):
+        """ Test bininig of discrete values V2 """
+        bins        = 10
+        mins        = 0
+        maxs        = 10
+        discState   = Discretise(bins,mins,maxs)
+
+        val     = [-1.0,0,1,1.5,1.45]
+        idxs    = discState.num1Dlist2int(val)
+        print 'idxs: ', idxs
+        self.assertItemsEqual(idxs,[0,0,1,2,1])
+
+    def test1DValuesOneAtTheTime(self):
+
+        discState   = Discretise(bin_sizes=10,state_mins=0,state_maxs=10)
+        val     = np.zeros((5,))
+        val[0]  = -1        # 0 (outside min range)
+        val[1]  =  0        # 0
+        val[2]  =  1        # 1
+        val[3]  =  1.5      # 2
+        val[4]  =  1.45     # 1
+        result = [0,0,1,2,1]
+
+        for i in range(0,len(result)):
+            idx = discState.numtoint(val[i])
+            print 'val[',i,']: ', val[i], ' idx: ', idx
+
+            self.assertEqual(idx,result[i])
+
+
+
+
     def test1DdValues2Int(self):
-        """ Test bininig of discrete values """
+        """ Test bininig of discrete values V1"""
         # create a discretisation object
         bins        = np.array([11])
         mins        = [0]
