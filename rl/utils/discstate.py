@@ -45,7 +45,7 @@ class Discretise:
         """
         assert isinstance(state,numbers.Number)
         state = self.bound_value(float(state),self.state_mins,self.state_maxs)
-        return round( (state - self.state_mins)/(self.state_maxs - self.state_mins) * self.bin_sizes, 0)
+        return int(round((state - self.state_mins)/(self.state_maxs - self.state_mins) * self.bin_sizes, 0))
 
     def num1Dlist2int(self,states):
         """ Converts a continuous list of 1D numbers to a list of discrete states
@@ -58,7 +58,7 @@ class Discretise:
         assert isinstance(states,list)
         return [ self.numtoint(s) for s in states ]
 
-    def vecNDtoint(self,state):
+    def vecNDtoint(self, state):
         """ Converts a continuous state vector to a discrete state integer
                 Args:
                     state (numpy.ndarray) : Current state of the environment.
@@ -67,7 +67,7 @@ class Discretise:
                         (int) : Discretised state index.
                 Comments:
         """
-        assert isinstance(state,np.ndarray)
+        assert isinstance(state, np.ndarray)
 
         idx = 0
         state_j = 0

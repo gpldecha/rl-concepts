@@ -1,14 +1,14 @@
 """ Test discrete Q-learning behaviour """
 
-import unittest
-import numpy as np
-from rl.utils.discstate import Discretise
-from rl.methods.qlearning import Qlearning
-from rl.policies.egreedy import Egreedy
-import rl.utils.plot as pl
 import time
+import unittest
+
 import gym
-import gym_leftright
+import numpy as np
+import rl.utils.plot as pl
+from rl.policies.egreedy import Egreedy
+from rl.utils.discstate import Discretise
+from methods.qlearning import Qlearning
 
 
 class TestQlearning(unittest.TestCase):

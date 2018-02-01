@@ -1,24 +1,21 @@
 """ Test discrete Q-learning behaviour """
 
-import numpy as np
-
 import os
+
+import numpy as np
 dir_path = os.path.dirname(os.path.realpath(__file__))
-print 'dir_path: ', dir_path
+print('dir_path: ', dir_path)
 import sys
 sys.path.insert(0, dir_path + "/..")
 print(sys.path)
 
 
 from rl.utils.discstate import Discretise
-from rl.methods.qlearning import Qlearning
+from methods.qlearning import Qlearning
 from rl.policies.egreedy import Egreedy
 import rl.utils.plot as pl
 import time
 import gym
-import gym_leftright
-
-
 
 if __name__ == "__main__":
 
@@ -30,7 +27,7 @@ if __name__ == "__main__":
         qlearning.alpha = 0.05
         qlearning.gamma = 0.5
 
-        egreedy   = Egreedy(Q=qlearning.Q,epsilon=0.8)
+        egreedy = Egreedy(Q=qlearning.Q, epsilon=0.8)
 
         num_episodes = 300
         bPlot        = True
@@ -41,10 +38,10 @@ if __name__ == "__main__":
 
         for eps in range(num_episodes):
 
-            print "episode: ", eps
+            print("episode: ", eps)
 
-            state_value     = env.reset()
-            state           = discState.numtoint(float(state_value))
+            state_value = env.reset()
+            state = discState.numtoint(float(state_value))
 
             for _ in range(100):
                 if bRender:
@@ -55,7 +52,7 @@ if __name__ == "__main__":
                 state_value, reward, done, info = env.step(action)
                 statep = discState.numtoint(float(state_value))
 
-                qlearning.update(state=state,action=action,reward=reward,statep=statep,bterminal=done)
+                qlearning.update(state=state, action=action, reward=reward, statep=statep, bterminal=done)
 
                 if done:
                     break
@@ -67,4 +64,4 @@ if __name__ == "__main__":
                     time.sleep(0.01)
 
 
-        raw_input("Finished Press Enter to continue...")
+        #raw_input("Finished Press Enter to continue...")

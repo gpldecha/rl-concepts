@@ -3,6 +3,7 @@ import numpy as np
 from rl.utils.discstate import DiscretiseState
 from rl.utils.discstate import Discretise
 
+
 class TestDiscretiseStateMethods(unittest.TestCase):
 
     def setUp(self):
