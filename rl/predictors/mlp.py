@@ -42,4 +42,4 @@ class MLP:
 
         self.logits = tf.matmul(layer, self.parameters['wout']) + self.parameters['bout']
         # Softmax
-        self.action_probs = tf.nn.softmax(self.logits, name='action_probs')
+        self.action_probabilities = tf.nn.softmax(self.logits, name='action_probs')
