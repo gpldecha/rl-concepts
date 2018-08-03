@@ -48,7 +48,7 @@ summary_writer = tf.summary.FileWriter(logs_path, graph=tf.get_default_graph())
 total_steps = 0
 steps = 0
 for episode in range(num_episodes):
-    print 'episode: ', episode
+    print('episode: %i', episode)
     state = env.reset()
     sum_reward = 0.0
     steps = 0
@@ -62,7 +62,7 @@ for episode in range(num_episodes):
 
         next_state, reward, done, _ = env.step(action)
         if reward != -1:
-            print 'GOAL REACHED'
+            print('GOAL REACHED')
             done = True
         else:
             done = False
@@ -81,7 +81,7 @@ for episode in range(num_episodes):
         state = next_state
 
         if total_steps % C == 0:
-            print 'update QMLP'
+            print('update QMLP')
             target_qmlp.update_parameters(sess, qmlp, 1.0)
 
         sum_reward += reward
@@ -100,6 +100,6 @@ for episode in range(num_episodes):
     plt.show(False)
 
     average_reward = float(sum_reward)/float(steps)
-    print 'average reward: ', average_reward, ' steps: ', steps, '  epsilon: ', epsilon
+    #print 'average reward: ', average_reward, ' steps: ', steps, '  epsilon: ', epsilon
     summary = tf.Summary(value=[tf.Summary.Value(tag="reward", simple_value=average_reward)])
     summary_writer.add_summary(summary, episode)

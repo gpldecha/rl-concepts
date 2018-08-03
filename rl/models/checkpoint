@@ -1,2 +1,6 @@
-model_checkpoint_path: "/home/guillaume/PythonWorkSpace/rl-concepts/rl/methods/../models/qmlp.ckpt-10"
-all_model_checkpoint_paths: "/home/guillaume/PythonWorkSpace/rl-concepts/rl/methods/../models/qmlp.ckpt-10"
+model_checkpoint_path: "/home/guillaume/PythonWorkSpace/rl-concepts/rl/methods/../models/qmlp.ckpt-10000"
+all_model_checkpoint_paths: "/home/guillaume/PythonWorkSpace/rl-concepts/rl/methods/../models/qmlp.ckpt-6000"
+all_model_checkpoint_paths: "/home/guillaume/PythonWorkSpace/rl-concepts/rl/methods/../models/qmlp.ckpt-7000"
+all_model_checkpoint_paths: "/home/guillaume/PythonWorkSpace/rl-concepts/rl/methods/../models/qmlp.ckpt-8000"
+all_model_checkpoint_paths: "/home/guillaume/PythonWorkSpace/rl-concepts/rl/methods/../models/qmlp.ckpt-9000"
+all_model_checkpoint_paths: "/home/guillaume/PythonWorkSpace/rl-concepts/rl/methods/../models/qmlp.ckpt-10000"
