@@ -69,3 +69,5 @@ def reinforce(n_episodes=1000, max_t=1000, gamma=1.0, print_every=100):
 
 
 scores = reinforce()
+
+#!/usr/bin/env python
