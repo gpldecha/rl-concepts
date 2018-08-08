@@ -1,4 +1,6 @@
 import tensorflow as tf
+from tensorflow.python.ops import math_ops
+from tensorflow.python.ops import array_ops
 import tensorflow.contrib.slim as slim
 import numpy as np
 import random
@@ -13,6 +15,24 @@ import gym
 # https://medium.com/autonomous-agents/how-to-tame-the-valley-hessian-free-hacks-for-optimizing-large-neuralnetworks-5044c50f4b55
 
 # computing hessian https://gist.github.com/guillaume-chevalier/6b01c4e43a123abf8db69fa97532993f
+
+
+def hessian_vector_product(ys, xs, v):
+    # Validate the input
+    length = len(xs)
+    if len(v) != length:
+        raise ValueError("xs and v must have the same length.")
+
+    # First backprop
+    grads = tf.gradients(ys, xs)
+
+    elemwise_products = [
+        math_ops.multiply(grad_elem, array_ops.stop_gradient(v_elem))
+        for grad_elem, v_elem in zip(grads, v)
+        if grad_elem is not None
+    ]
+    # Second backprop
+    return tf.gradients(elemwise_products, xs)
 
 
 class Agent:
@@ -35,9 +55,6 @@ class Agent:
 
         self.action_log_prob = tf.log(self.responsible_outputs)
 
-        # gradient = tf.gra
-
-
         # # calculate the gradient of the log probability at each point in time.
         self.t_parameters = tf.trainable_variables("policy")
 
@@ -45,7 +62,15 @@ class Agent:
 
         self.gradients = tf.gradients(self.loss, self.t_parameters)
 
-        self.hess = tf.hessians(self.action_log_prob, self.t_parameters)
+        self.vector_holder = []
+        for parameter in self.t_parameters:
+            self.vector_holder.append(tf.Variable(tf.random_normal(parameter.get_shape())))
+
+
+        self.npg_grad = hessian_vector_product(self.loss, self.t_parameters, self.vector_holder)
+
+
+        # self.hess = tf._hessian_vector_product(self.action_log_prob, self.t_parameters)
 
         # list ov variables
         # [0] tf.Variable shape=(4, 8)
@@ -135,6 +160,11 @@ if __name__ == "__main__":
                     gradient = sess.run(agent.gradients, feed_dict={agent.value_holder: G, agent.action_holder: A, agent.state_in: S})
                     print('gradient[0] {}'.format(gradient[0].shape))
                     print('gradient[1] {}'.format(gradient[1].shape))
+
+
+                    npg = sess.run(agent.npg_grad, feed_dict={agent.value_holder: G, agent.action_holder: A, agent.state_in: S})
+                    print('npg[0] {}'.format(gradient[0].shape))
+                    print('npg[1] {}'.format(gradient[1].shape))
 
                     # update control policy
                     #_ = sess.run(agent.gra, feed_dict=dict(zip(agent.gradient_holders, agent.gradients)))

@@ -45,7 +45,7 @@ fig = plt.figure()
 ax = fig.gca(projection='3d')               # to work in 3d
 plt.hold(True)
 
-ax.plot_surface(x_surf, y_surf, yq.reshape(z_surf.shape), cmap=cm.hot, alpha=0.8)    # plot a 3d surface plot
+ax.plot_surface(x_surf, y_surf, yq.reshape(z_surf.shape), alpha=0.8)    # plot a 3d surface plot
 
 ax.scatter(X[:, 0], X[:, 1], y, s=20)
 

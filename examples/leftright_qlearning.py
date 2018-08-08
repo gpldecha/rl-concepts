@@ -11,7 +11,7 @@ print(sys.path)
 
 
 from rl.utils.discstate import Discretise
-from methods.qlearning import Qlearning
+from rl.methods.qlearning import Qlearning
 from rl.policies.egreedy import Egreedy
 import rl.utils.plot as pl
 import time
