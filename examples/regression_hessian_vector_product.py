@@ -3,31 +3,36 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 
-Xc1 = 1.0*np.hstack((np.random.randn(200, 1)+1, np.random.randn(200, 1) - 1))
-Xc2 = np.random.multivariate_normal([1, 1], np.array([[0.1, 1.0],
-                                                      [1.0, 0.1]]), 200)
-# https://github.com/aymericdamien/TensorFlow-Examples/blob/master/examples/2_BasicModels/logistic_regression.py
+num_data_per_class = 100
+
+Xc1 = np.random.multivariate_normal([1,-3], np.array([[1.0, 0.0],
+                                                      [0.0, 1.0]]), num_data_per_class)
+
+Xc2 = np.random.multivariate_normal([-1, 3], np.array([[1.0, 0.0],
+                                                       [0.0, 2.0]]), num_data_per_class)
 
 X = np.vstack((Xc1, Xc2))
-y = np.concatenate((np.zeros(200), np.ones(200)))
-idx = np.random.permutation(400)
+y = np.concatenate((np.zeros(num_data_per_class), np.ones(num_data_per_class)))
+idx = np.random.permutation(2*num_data_per_class)
 X = X[idx, :]
 y = y[idx].reshape((-1, 1))
 
-# classifier definition
+
 class AdamClassifier:
 
     def __init__(self):
         self.inputs = tf.placeholder(tf.float32, [None, 2])
         self.labels = tf.placeholder(tf.float32, [None, 1])
 
-        self.W = tf.Variable(tf.random_normal([1, 2]))
-        self.b = tf.Variable(tf.random_normal([1]))
-        self.h = tf.transpose(tf.sigmoid(tf.matmul(self.W, self.inputs, transpose_b=True)) + self.b)
-        self.predictions = tf.reshape(tf.argmax(self.h, 1), shape=[-1, 1])
+        self.W = tf.Variable(tf.zeros([2, 1]))
+        self.b = tf.Variable(tf.zeros([1]))
 
-        self.loss = tf.losses.log_loss(self.labels, self.h)
-        #self.loss = tf.reduce_mean(-self.labels*tf.log(self.h + 1e-10) - (1.0 - self.labels)*tf.log(1.0 - self.h + 1e-10))
+        self.Z = tf.add(tf.matmul(self.inputs, self.W), self.b)
+
+        self.h = tf.nn.sigmoid(self.Z)
+
+        self.loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=self.Z, labels=self.labels))
+
         self.optimizer = tf.train.AdamOptimizer(learning_rate=0.001).minimize(self.loss)
 
 class GradOptimizer:
@@ -101,29 +106,31 @@ def run_adam_classifer():
 
     sess.run(tf.global_variables_initializer())
 
-    max_steps = 20000
+    max_steps = 1000
 
     for step in range(1, max_steps + 1):
         sess.run(classifier.optimizer, feed_dict={classifier.inputs: X, classifier.labels: y})
         if step % 100 == 0:
-            w = classifier.W.eval(sess)[0]
+            w = classifier.W.eval(sess)
             loss = sess.run(classifier.loss, feed_dict={classifier.inputs: X, classifier.labels: y})
-            print('step: ' + str(step) + ' loss: ' + str(loss) + ' w ' + str(w))
+            print('step: ' + str(step) + ' loss: ' + str(loss))
 
+    xx, yy = np.mgrid[-5:5:.01, -5:5:.01]
+    grid = np.c_[xx.ravel(), yy.ravel()]
 
-    w = classifier.W.eval(sess)[0]
-
-    print('w: {}'.format(w))
-
-    cline = np.zeros((2, 2))
-    cline[0, :] = -4.0*w
-    cline[1, :] = 4.0*w
+    Xtest = np.vstack((xx.flatten(), yy.flatten())).transpose()
+    probs = sess.run(classifier.h, feed_dict={classifier.inputs: Xtest})
+    probs = probs.reshape(xx.shape)
 
 
     plt.figure()
+    ax = plt.gca()
+    contour = ax.contourf(xx, yy, probs, 25, cmap="RdBu", vmin=0, vmax=1)
+    ax_c = plt.colorbar(contour)
+    ax.contour(xx, yy, probs, levels=[.5], cmap="Greys", vmin=0, vmax=.6)
+
     plt.plot(Xc1[:, 0], Xc1[:, 1], 'o')
     plt.plot(Xc2[:, 0], Xc2[:, 1], 'o')
-    plt.plot(cline[:, 0], cline[:, 1], 'k-', lw=3)
     plt.show()
 
 
